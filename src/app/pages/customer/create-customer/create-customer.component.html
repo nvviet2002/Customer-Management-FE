@@ -1,0 +1,186 @@
+<nz-modal
+  [(nzVisible)]="isVisible"
+  [nzTitle]="
+    isCreateForm == true ? 'Thêm mới khách hàng' : 'Cập nhật khách hàng'
+  "
+  (nzOnCancel)="handleCancel()"
+  [nzFooter]="null"
+>
+  <ng-container *nzModalContent>
+    <form
+      nz-form
+      nz-row
+      [formGroup]="validateForm"
+      (ngSubmit)="isCreateForm ? submitCreateForm() : submitUpdateForm()"
+    >
+      <nz-form-item nz-col nzSpan="12">
+        <nz-form-label [nzSpan]="24" nzRequired>Họ tên</nz-form-label>
+        <nz-form-control
+          [nzSpan]="23"
+          nzHasFeedback
+          [nzErrorTip]="nameErrorTpl"
+        >
+          <input nz-input formControlName="name" placeholder="Nguyễn Văn A" />
+          <ng-template #nameErrorTpl let-control>
+            @if (control.errors?.['required']) { Họ tên không được để trống! }
+          </ng-template>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item nz-col nzSpan="12">
+        <nz-form-label [nzSpan]="24" nzRequired>Ngày sinh</nz-form-label>
+        <nz-form-control
+          [nzSpan]="23"
+          nzHasFeedback
+          [nzErrorTip]="birthdayErrorTpl"
+        >
+          <nz-date-picker
+            formControlName="birthday"
+            style="width: 100%"
+          ></nz-date-picker>
+          <ng-template #birthdayErrorTpl let-control>
+            @if (control.errors?.['required']) { Ngày sinh không được để trống!
+            }
+          </ng-template>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item nz-col nzSpan="12">
+        <nz-form-label [nzSpan]="24" nzRequired>Số điện thoại</nz-form-label>
+        <nz-form-control
+          [nzSpan]="23"
+          nzHasFeedback
+          [nzErrorTip]="phoneNumberErrorTpl"
+        >
+          <input nz-input formControlName="phoneNumber" placeholder="(+84)" />
+          <ng-template #phoneNumberErrorTpl let-control>
+            @if (control.errors?.['required']) { Số điện thoại không được để
+            trống! }
+          </ng-template>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item nz-col nzSpan="12">
+        <nz-form-label [nzSpan]="24" nzRequired>Giới tính</nz-form-label>
+        <nz-form-control [nzSpan]="23" nzHasFeedback [nzErrorTip]="sexErrorTpl">
+          <nz-select formControlName="sex" nzPlaceHolder="--Giới tính--">
+            <nz-option nzValue="Male" nzLabel="Nam"></nz-option>
+            <nz-option nzValue="Female" nzLabel="Nữ"></nz-option>
+            <nz-option nzValue="Other" nzLabel="Khác"></nz-option>
+          </nz-select>
+          <ng-template #sexErrorTpl let-control>
+            @if (control.errors?.['required']) { Giới tính không được để trống!
+            }
+          </ng-template>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item nz-col nzSpan="12">
+        <nz-form-label [nzSpan]="24" nzRequired>Tỉnh/thành phố</nz-form-label>
+        <nz-form-control
+          [nzSpan]="23"
+          nzHasFeedback
+          [nzErrorTip]="provinceErrorTpl"
+        >
+          <nz-select
+            nzShowSearch
+            nzAllowClear
+            nzPlaceHolder="---Tỉnh/thành phố---"
+            formControlName="provinceCode"
+            (ngModelChange)="onProvinceSelectChange()"
+          >
+            <nz-option
+              *ngFor="let province of provinces"
+              [nzLabel]="province.name"
+              [nzValue]="province.code"
+            ></nz-option>
+          </nz-select>
+          <ng-template #provinceErrorTpl let-control>
+            @if (control.errors?.['required']) { Hãy chọn tỉnh/thành phố! }
+          </ng-template>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item nz-col nzSpan="12">
+        <nz-form-label [nzSpan]="24" nzRequired>Quận/huyện</nz-form-label>
+        <nz-form-control
+          [nzSpan]="23"
+          nzHasFeedback
+          [nzErrorTip]="districtErrorTpl"
+        >
+          <nz-select
+            #districtSelect
+            nzShowSearch
+            nzAllowClear
+            nzPlaceHolder="---Quận/huyện---"
+            formControlName="districtCode"
+            (ngModelChange)="onDistrictSelectChange()"
+            [nzDisabled]="this.validateForm.value.provinceCode == ''"
+          >
+            <nz-option
+              *ngFor="let district of districts"
+              [nzLabel]="district.name"
+              [nzValue]="district.code"
+            ></nz-option>
+          </nz-select>
+          <ng-template #districtErrorTpl let-control>
+            @if (control.errors?.['required']) { Hãy chọn quận/huyện! }
+          </ng-template>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item nz-col nzSpan="12">
+        <nz-form-label [nzSpan]="24" nzRequired>Xã/phường</nz-form-label>
+        <nz-form-control
+          [nzSpan]="23"
+          nzHasFeedback
+          [nzErrorTip]="wardErrorTpl"
+        >
+          <nz-select
+            #wardSelect
+            nzShowSearch
+            nzAllowClear
+            nzPlaceHolder="---Xã/phường---"
+            formControlName="wardCode"
+            [nzDisabled]="this.validateForm.value.districtCode == ''"
+          >
+            <nz-option
+              *ngFor="let ward of wards"
+              [nzLabel]="ward.name"
+              [nzValue]="ward.code"
+            ></nz-option>
+          </nz-select>
+          <ng-template #wardErrorTpl let-control>
+            @if (control.errors?.['required']) { Hãy chọn xã/phường! }
+          </ng-template>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item nz-col nzSpan="12">
+        <nz-form-label [nzSpan]="24" nzRequired>Số nhà</nz-form-label>
+        <nz-form-control
+          [nzSpan]="23"
+          nzHasFeedback
+          [nzErrorTip]="addressErrorTpl"
+        >
+          <input
+            nz-input
+            formControlName="address"
+            placeholder="Số 4xx, đường xxx"
+          />
+          <ng-template #addressErrorTpl let-control>
+            @if (control.errors?.['required']) { Hãy điền số nhà! }
+          </ng-template>
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item nz-col nzSpan="24">
+        <nz-form-control [nzOffset]="15" [nzSpan]="9">
+          <button nz-button type="button" (click)="handleCancel()">Hủy</button>
+          <nz-divider nzType="vertical"></nz-divider>
+          <button
+            nz-button
+            nzType="primary"
+            [nzLoading]="isButtonLoading"
+            [disabled]="!validateForm.valid"
+          >
+            {{ isCreateForm ? "Thêm" : "Cập nhật" }}
+          </button>
+        </nz-form-control>
+      </nz-form-item>
+    </form>
+  </ng-container>
+</nz-modal>

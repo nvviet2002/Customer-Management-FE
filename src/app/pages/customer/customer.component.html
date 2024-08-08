@@ -1,0 +1,122 @@
+<nz-card [nzBordered]="false">
+  <div nz-row>
+    <form nz-form nz-col [nzSpan]="8" style="display: flex">
+      <div nz-col [nzSpan]="18">
+        <input
+          [(ngModel)]="paginateRequest.searchTerm"
+          name="searchTerm"
+          nz-input
+          placeholder="Nguyễn Văn A"
+          (ngModelChange)="onSearch()"
+        />
+      </div>
+      <div nz-col [nzSpan]="6">
+        <button nz-button nzType="primary">
+          <span
+            nz-icon
+            nzType="search"
+            nzTheme="outline"
+            (click)="loadData()"
+          ></span>
+        </button>
+      </div>
+    </form>
+    <div nz-col nzOffset="8" [nzSpan]="8">
+      <button
+        nz-button
+        nzType="primary"
+        nzSize="default"
+        (click)="showCreateModal()"
+      >
+        <span nz-icon nzType="plus" nzTheme="outline"></span>
+        Thêm
+      </button>
+      <nz-divider nzType="vertical"></nz-divider>
+      <button
+        nz-button
+        nzType="default"
+        nzSize="default"
+        (click)="exportExcel()"
+      >
+        <span nz-icon nzType="export" nzTheme="outline"></span>
+        Xuất Excel
+      </button>
+      <nz-divider nzType="vertical"></nz-divider>
+      <button
+        nz-button
+        nzType="default"
+        nzSize="default"
+        (click)="importExcel()"
+      >
+        <span nz-icon nzType="import" nzTheme="outline"></span>
+        Import Excel
+      </button>
+    </div>
+  </div>
+</nz-card>
+
+<nz-table
+  style="height: 470px; overflow: scroll"
+  #customerTable
+  nzBordered
+  nzShowSizeChanger
+  [nzFrontPagination]="false"
+  [nzPageSizeOptions]="pageSizeOptions"
+  [nzLoading]="isSpinning"
+  [nzTotal]="paginateResponse.totalCount"
+  [nzData]="customers"
+  [nzPageSize]="paginateRequest.pageSize"
+  [nzPageIndex]="paginateRequest.pageNumber"
+  (nzPageIndexChange)="onPageIndexChange($event)"
+  (nzPageSizeChange)="onPageSizeChange($event)"
+>
+  <thead>
+    <tr>
+      <th>STT</th>
+      <th>Họ tên</th>
+      <th>Ngày sinh</th>
+      <th>Số điện thoại</th>
+      <th>Giới tính</th>
+      <th>Địa chỉ</th>
+      <th>Tùy chọn</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let data of customerTable.data; index as i">
+      <td>{{ i + 1 }}</td>
+      <td>
+        {{ data.name }}
+      </td>
+      <td>{{ data.birthday | date : "dd/MM/yyyy" }}</td>
+      <td>{{ data.phoneNumber }}</td>
+      <td>{{ convertCustomerSex(data.sex) }}</td>
+      <td>{{ data.address.fullAddress }}</td>
+
+      <td>
+        <button
+          class="text-success"
+          nz-button
+          nzType="default"
+          nzSize="default"
+          nzShape="circle"
+          (click)="showUpdateModal(data)"
+        >
+          <span nz-icon nzType="edit" nzTheme="outline"></span>
+        </button>
+        <nz-divider nzType="vertical"></nz-divider>
+        <button
+          class="text-danger"
+          nz-button
+          nzType="default"
+          nzSize="default"
+          nzShape="circle"
+          (click)="showDeleteConfirm(data)"
+        >
+          <span nz-icon nzType="delete" nzTheme="outline"></span>
+        </button>
+      </td>
+    </tr>
+  </tbody>
+</nz-table>
+<app-create-customer (reloadDataEvent)="loadData()"></app-create-customer>
+<app-import-customer (reloadDataEvent)="loadData()"></app-import-customer>

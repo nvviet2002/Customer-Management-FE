@@ -1,0 +1,39 @@
+<nz-modal
+  [(nzVisible)]="isVisible"
+  nzTitle="Import khách hàng"
+  (nzOnCancel)="handleCancel()"
+  [nzFooter]="null"
+>
+  <ng-container *nzModalContent>
+    <div nz-row>
+      <div nz-col [nzSpan]="24" style="display: flex; justify-content: center">
+        <nz-upload [(nzFileList)]="fileList" [nzBeforeUpload]="beforeUpload">
+          <button nz-button>
+            <span nz-icon nzType="upload"></span>
+            Chọn file
+          </button>
+        </nz-upload>
+      </div>
+      <div nz-col [nzSpan]="24" style="display: flex; justify-content: center">
+        <button
+          nz-button
+          style="margin: 12px"
+          type="button"
+          (click)="handleCancel()"
+        >
+          Hủy
+        </button>
+        <button
+          style="margin: 12px"
+          nz-button
+          [nzType]="'primary'"
+          [nzLoading]="isUpLoading"
+          (click)="handleUpload()"
+          [disabled]="fileList.length === 0"
+        >
+          {{ isUpLoading ? "Đang tải..." : "Import" }}
+        </button>
+      </div>
+    </div>
+  </ng-container>
+</nz-modal>

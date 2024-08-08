@@ -1,0 +1,21 @@
+.btn-danger{
+  background-color: red;
+}
+.btn-success {
+  background-color: green;
+}
+.text-white {
+  color: whitesmoke;
+}
+
+.text-success {
+  color: green;
+}
+.text-danger {
+  color: red;
+}
+.mx-2{
+  margin-left: 2rem;
+  margin-right: 2rem;
+}
+
